@@ -28,7 +28,6 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 currentPosition = transform.position;
         Vector3 newPosition = transform.position;
         // camera position
         if (Input.GetKey(KeyCode.A))

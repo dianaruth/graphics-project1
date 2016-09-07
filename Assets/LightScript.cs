@@ -10,6 +10,6 @@ public class LightScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.LookAt(Vector3.zero);
+        transform.LookAt(new Vector3(64, 0, 64));
 	}
 }
