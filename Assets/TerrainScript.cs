@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class TerrainScript : MonoBehaviour {
+public class TerrainScript : MonoBehaviour
+{
 
     // size of heightmap should be (power of 2) + 1 so pow is the power 2 is raised to
     public int pow;
@@ -15,8 +16,15 @@ public class TerrainScript : MonoBehaviour {
     // heightmap
     public float[,] heights;
 
-	// Use this for initialization
-	void Start () {
+    //normals corresponding with heights
+    public Vector3[,] normals;
+
+    public Shader shader;
+    public PointLight pointLight;
+
+    // Use this for initialization
+    void Start()
+    {
         // diamond square algorithm
         size = (int)Mathf.Pow(2, pow) + 1;
         max = size - 1;
@@ -32,13 +40,19 @@ public class TerrainScript : MonoBehaviour {
         MeshFilter m = this.gameObject.AddComponent<MeshFilter>();
         m.mesh = this.CreateMesh();
         MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
-        renderer.material.shader = Shader.Find("Unlit/PhongShader");
+        renderer.material.shader = shader;
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Get renderer component (in order to pass params to shader)
+        MeshRenderer renderer = this.gameObject.GetComponent<MeshRenderer>();
+
+        // Pass updated light positions to shader
+        renderer.material.SetColor("_PointLightColor", this.pointLight.color);
+        renderer.material.SetVector("_PointLightPosition", this.pointLight.GetWorldPosition());
+    }
 
     // this implementation of the diamond-square algorithm is based on the tutorial at
     // http://www.playfuljs.com/realistic-terrain-in-130-lines/
@@ -96,13 +110,14 @@ public class TerrainScript : MonoBehaviour {
         heights[x, y] = ((Wrap(x, y - size) + Wrap(x + size, y) + Wrap(x, y + size) + Wrap(x - size, y)) / 4) + offset;
     }
 
-    Mesh CreateMesh ()
+    Mesh CreateMesh()
     {
         Mesh m = new Mesh();
         m.name = "Terrain";
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Color> colors = new List<Color>();
+        //      List<Vector3> norms = new List<Vector3>();
         // add vertices in order based on heightmap and add triangle ordering
         // to ensure correct rendering
         // subtract one iteration from each loop because we are adding squares, not single points
@@ -128,15 +143,21 @@ public class TerrainScript : MonoBehaviour {
                 triangles.Add(vertices.Count - 3);
                 triangles.Add(vertices.Count - 1);
                 triangles.Add(vertices.Count - 2);
+
+
             }
         }
+
+
         m.vertices = vertices.ToArray();
         m.triangles = triangles.ToArray();
         m.colors = colors.ToArray();
+        //Recalculate vertex normals based on new vertices and triangles
+        m.RecalculateNormals();
         return m;
     }
-     
-    void AddColor (List<Color> c, float height)
+
+    void AddColor(List<Color> c, float height)
     {
         // add vertex color based on height of vertex
         if (height < 40)
@@ -152,4 +173,7 @@ public class TerrainScript : MonoBehaviour {
             c.Add(Color.white);
         }
     }
-}
+
+
+    }
+

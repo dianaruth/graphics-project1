@@ -39,7 +39,7 @@ Shader "Unlit/PhongShader"
 
 #include "UnityCG.cginc"
 
-		uniform float3 _PointLightColor;
+	uniform float3 _PointLightColor;
 	uniform float3 _PointLightPosition;
 
 	struct vertIn
@@ -88,7 +88,7 @@ Shader "Unlit/PhongShader"
 		float3 interpNormal = normalize(v.worldNormal);
 
 		// Calculate ambient RGB intensities
-		float Ka = 1;
+		float Ka = .5;
 		float3 amb = v.color.rgb * UNITY_LIGHTMODEL_AMBIENT.rgb * Ka;
 
 		// Calculate diffuse RBG reflections, we save the results of L.N because we will use it again
