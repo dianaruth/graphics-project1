@@ -61,18 +61,18 @@ public class TerrainScript : MonoBehaviour
         int half = size / 2;
         if (half < 1) return;
 
-        for (int y = half; y < max; y += size)
+        for (int x = half; x < max; x += size)
         {
-            for (int x = half; x < max; x += size)
+            for (int y = half; y < max; y += size)
             {
-                SquareStep(x, y, half, Random.value);
+                SquareStep(y, x, half, Random.value);
             }
         }
-        for (int y = 0; y <= max; y += half)
+        for (int x = 0; x <= max; x += half)
         {
-            for (int x = (y + half) % size; x <= max; x += size)
+            for (int y = (x + half) % size; y <= max; y += size)
             {
-                DiamondStep(x, y, half, Random.value);
+                DiamondStep(y, x, half, Random.value);
             }
         }
         DiamondSquare(size / 2);
@@ -117,7 +117,6 @@ public class TerrainScript : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Color> colors = new List<Color>();
-        //      List<Vector3> norms = new List<Vector3>();
         // add vertices in order based on heightmap and add triangle ordering
         // to ensure correct rendering
         // subtract one iteration from each loop because we are adding squares, not single points
@@ -147,8 +146,6 @@ public class TerrainScript : MonoBehaviour
 
             }
         }
-
-
         m.vertices = vertices.ToArray();
         m.triangles = triangles.ToArray();
         m.colors = colors.ToArray();
